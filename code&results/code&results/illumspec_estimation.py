@@ -192,7 +192,7 @@ class TVISTABlock(torch.nn.Module):
 		absdiff_y = torch.abs(diff_y) - self.soft_thr
 
 		soft_x = F.relu(absdiff_x)*torch.sign(diff_x) 
-		soft_y = F.relu(absdiff_x)*torch.sign(diff_x)
+		soft_y = F.relu(absdiff_y)*torch.sign(diff_y)
 		
 		temp_soft_x = nn.ReplicationPad2d((0, 0, 1, 1))(soft_x)
 		temp_soft_y = nn.ReplicationPad2d((0, 0, 1, 1))(soft_y)
@@ -243,7 +243,7 @@ class SVDISTABlock(torch.nn.Module):
 			temp_mat_x_prime = torch.matmul(torch.matmul(u, torch.diag_embed(s)), v.transpose(-2, -1))
 			mat_x_prime = torch.cat([mat_x_prime,temp_mat_x_prime.unsqueeze(0)],0)
 			
-		x = mat_x.view(batch_size, self.in_channels, num_x, num_y)
+		x = mat_x_prime.view(batch_size, self.in_channels, num_x, num_y)
 
 		return x
 
